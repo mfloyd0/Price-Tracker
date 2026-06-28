@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import time
 from urllib.parse import urlparse, urlsplit
 
-
+# get price and info
 def fetch_price(url):
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36"}
 
@@ -31,25 +31,38 @@ def fetch_price(url):
         return None
 
 
-def calculate(current, lastChecked):
+def process(current, lastChecked):
 
-    if current["price"] != lastChecked["Last Price"]:
-        if lastChecked["Last Price"] > current["price"]:
+    if current["price"] != lastChecked["Price"]:
+        if lastChecked["Price"] > current["price"]:
             print("sale")
             print("send notification")
+            lastChecked["Price"] = current["price"]
             if lastChecked["Lowest Recorded"] != current[ "Lowest Recorded"]: #for empty cell
                 lastChecked["Lowest Recorded"] = current["price"]
-                return lastChecked
+
+            return lastChecked
 
     else:
-        print("Price same")
-        return lastChecked
+        return None
+
+
+
+def update_price_excel(update):
+    df = pd.read_excel('products to track.xlsx')
+
+    for index, row in df.iterrows():
+        if update["URL"] == row['URL']:
+            df.loc[df["URL"] == update["URL"], "Price"] = update["Price"]
+            df.to_excel('products to track.xlsx', index=False)
+            print("price updated")
 
 
 
 
 if __name__ == "__main__":
 
+    # Get url
     df = pd.read_excel('products to track.xlsx')
 
     # Loop through rows
@@ -60,7 +73,7 @@ if __name__ == "__main__":
             "Website Name": row['Website Name'],
             "Name": row['Name'],
             "URL": row['URL'],
-            "Last Price": row['Last Price'],
+            "Price": row['Price'],
             "Lowest Recorded": row['Lowest Recorded'],
         }
 
@@ -72,7 +85,11 @@ if __name__ == "__main__":
 
         product_info = fetch_price(url)
 
-        updated_info = calculate(product_info, product)
+        updated_info = process(product_info, product)
+
+
+        if updated_info != None:
+            update_price_excel(updated_info)
 
 
 
