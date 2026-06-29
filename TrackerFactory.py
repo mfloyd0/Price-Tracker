@@ -1,5 +1,7 @@
 from sitetrackers import  newegg
 from sitetrackers import amazon
+from urllib.parse import urlsplit
+
 
 
 
@@ -7,10 +9,13 @@ from sitetrackers import amazon
 class TrackerFactory:
 
     @staticmethod
-    def choose_tracker(choice):
-        if choice == "NewEgg":
+    def choose_tracker(product):
+        # Extract the full hostname string
+        hostname = urlsplit(product["URL"]).hostname
+
+        if hostname == "www.newegg.com":
             return newegg.NewEgg()
-        elif choice == "Amazon":
+        elif hostname == "www.amazon.com":
             print("Amazon Tracker Started")
             return amazon.Amazon()
         else:
