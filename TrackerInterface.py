@@ -4,5 +4,5 @@ from abc import ABC, abstractmethod, ABCMeta
 class ITracker(metaclass=ABCMeta):
 
     @abstractmethod
-    def track_price(self):
+    def track_price(self, product):
         """ Interface Method """

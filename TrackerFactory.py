@@ -1,4 +1,4 @@
-from sitetrackers import  newegg
+from sitetrackers import newegg, bestbuy
 from sitetrackers import amazon
 from urllib.parse import urlsplit
 
@@ -18,6 +18,9 @@ class TrackerFactory:
         elif hostname == "www.amazon.com":
             print("Amazon Tracker Started")
             return amazon.Amazon()
+        elif hostname == "www.bestbuy.com":
+            print("Best Buy Tracker Started")
+            return bestbuy.BestBuy()
         else:
             raise ValueError("Invalid choice")
 

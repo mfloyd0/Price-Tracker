@@ -4,16 +4,16 @@ from bs4 import BeautifulSoup
 import pandas as pd
 
 
-class Amazon(ITracker):
+class BestBuy(ITracker):
 
     def track_price(self, product):
-        print("Getting price from Amazon")
-
+        print("Getting price from Best Buy")
         try:
             item = self.fetch_price(product["URL"])
         except:
             print("error getting page.")
             return None
+
 
         item_update = self.process(item, product)
 
@@ -34,8 +34,8 @@ class Amazon(ITracker):
         soup = BeautifulSoup(response.text, "html.parser")
 
         # Extract product name and price
-        product_name = soup.find("h1", class_="title").text.strip()
-        price_element = soup.find("span", class_="a-price")
+        product_name = soup.find("h1", class_="product-title").text.strip()
+        price_element = soup.find("div", class_="price-current")
         if price_element:
             price = price_element.text.strip()
             # Clean price by removing non-numeric characters
@@ -71,5 +71,4 @@ class Amazon(ITracker):
                 df.loc[df["URL"] == update["URL"], "Price"] = update["Price"]
                 df.to_excel('products to track.xlsx', index=False)
                 print("price updated")
-
 
